@@ -2,6 +2,7 @@
 
 //module imports
 const User = require("../model/user");
+const cloudinary = require("../config/cloudinary");
 const ErrorResponse = require("../utils/errorResponse");
 
 //custom post error strings
@@ -10,7 +11,7 @@ const emailRequired = "Your email is required";
 
 //post controller
 exports.post = async (req, res, next) => {
-	const { email, picture } = req.body
+	let { email, picture } = req.body
 
 	try {
 		if(!email){
@@ -22,6 +23,13 @@ exports.post = async (req, res, next) => {
 		if(userExist){
 			return next(new ErrorResponse(userExistsError, 400))
 		}
+
+		const result = await cloudinary.uploader.upload(
+			req.file.path,
+			{ folder: "starter" }
+		)
+
+		picture = result.url
 
 		const user = await User.create({email, picture})
 
@@ -35,7 +43,7 @@ exports.post = async (req, res, next) => {
 	}
 }
 
-//custom edit error strings]
+//custom edit error strings
 const noUserError = "No user"
 
 //edit by id controller
