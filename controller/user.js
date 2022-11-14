@@ -108,3 +108,30 @@ exports.fetchOne = (req, res, next) => {
 		next(error)
 	}
 }
+
+//delete user
+exports.deleteUser = (req, res, next) => {
+	const id = req.params.id
+
+	try {
+		User.findByIdAndDelete(
+			id,
+			(error, user) => {
+				if(!user){
+					return next(new ErrorResponse(noUserError, 404))
+				}
+
+				if(error){
+					return next(new ErrorResponse(error, 500))
+				}
+
+				res.status(200).json({
+					success: true,
+					data: "User deleted"
+				})				
+			}
+		)
+	} catch (error) {
+		next(error)
+	}
+}
