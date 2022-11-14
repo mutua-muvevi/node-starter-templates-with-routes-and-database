@@ -39,7 +39,7 @@ exports.post = async (req, res, next) => {
 const noUserError = "No user"
 
 //edit by id controller
-exports.edit = (req, res, next) => {
+exports.editById = (req, res, next) => {
 	const id = req.params.id
 	const { email, picture } = req.body
 
@@ -49,6 +49,47 @@ exports.edit = (req, res, next) => {
 			{ email, picture },
 			{ new: true },
 			(error, user) => {
+				if(!user){
+					return next(new ErrorResponse(noUserError, 404))
+				}
+
+				if(error){
+					return next(new ErrorResponse(error, 500))
+				}
+
+				res.status(200).json({
+					success: true,
+					data: user
+				})
+			}
+		)
+	} catch (error) {
+		next(error)
+	}
+}
+
+//get users
+exports.fetchAll = async (req, res, next) => {
+	try {
+		const users = await User.find()
+
+		res.status(200).json({
+			success: true,
+			data: users
+		})
+	} catch (error) {
+		next(error)
+	}
+}
+
+//get one user
+exports.fetchOne = (req, res, next) => {
+	const id = req.params.id
+
+	try {
+		User.findById(
+			id,
+			(error, user)=> {
 				if(!user){
 					return next(new ErrorResponse(noUserError, 404))
 				}
