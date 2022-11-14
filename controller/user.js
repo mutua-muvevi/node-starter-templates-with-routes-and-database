@@ -8,6 +8,7 @@ const ErrorResponse = require("../utils/errorResponse");
 const userExistsError = "User already exists";
 const emailRequired = "Your email is required";
 
+//this is the post controller
 exports.post = async (req, res, next) => {
 	const { email, picture } = req.body
 
